@@ -9,7 +9,7 @@ WORKDIR /source
 COPY day02.csproj .
 COPY input.txt .
 COPY Program.cs .
-RUN dotnet publish -c Release -o publish --use-current-runtime -p:"PublishAot=true;StripSymbols=true;IlcOptimizationPreference=Speed"
+RUN dotnet publish -c Release -o publish
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0
 WORKDIR /app
