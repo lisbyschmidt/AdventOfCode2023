@@ -8,7 +8,7 @@ WORKDIR /source
 COPY day07.csproj .
 COPY input.txt .
 COPY Program.cs .
-RUN dotnet publish -c Release -o publish
+RUN dotnet publish -c release -o publish
 
 FROM amd64/alpine
 WORKDIR /app

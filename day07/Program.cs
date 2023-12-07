@@ -7,11 +7,11 @@
 static Card[] CardTypes(string labels) => labels.Select((label, value) => new Card(label, value)).ToArray();
 
 static Hand[] ParseHands(Card[] cardTypes) => File.ReadLines("input.txt")
-    .Select(x => ParseHand(x.Split(), cardTypes)).ToArray();
+    .Select(line => ParseHand(line.Split(), cardTypes)).ToArray();
 
-static Hand ParseHand(string[] round, Card[] cardTypes) => new(
-    Cards: round[0].Select(label => cardTypes.Single(cardType => cardType.Label == label)).ToArray(),
-    Bid: long.Parse(round[1]));
+static Hand ParseHand(string[] cardsAndBid, Card[] cardTypes) => new(
+    Cards: cardsAndBid[0].Select(label => cardTypes.Single(cardType => cardType.Label == label)).ToArray(),
+    Bid: long.Parse(cardsAndBid[1]));
 
 static long TotalWinnings(Hand[] hands, Func<Hand, HandStrength> strengthFunc) => hands.OrderBy(strengthFunc)
     .ThenBy(x => x.Cards[0].Value).ThenBy(x => x.Cards[1].Value).ThenBy(x => x.Cards[2].Value)
@@ -27,14 +27,13 @@ static HandStrength Strength(Hand hand) {
         (_, 3) => HandStrength.ThreeOfAKind,
         (3, 2) => HandStrength.TwoPair,
         (_, 2) => HandStrength.OnePair,
-        (_, _) => HandStrength.HighCard
+        _ => HandStrength.HighCard
     };
 }
 
 static HandStrength StrengthWithJokers(Hand hand) =>
-    (Strength(hand), hand.Cards.Count(x => x.Label == 'J')) switch
-    {
-        (var x, 0) => x,
+    (Strength(hand), hand.Cards.Count(x => x.Label == 'J')) switch {
+        (var handStrength, 0) => handStrength,
         (HandStrength.HighCard, _) => HandStrength.OnePair,
         (HandStrength.OnePair, _) => HandStrength.ThreeOfAKind,
         (HandStrength.TwoPair, 1) => HandStrength.FullHouse,
